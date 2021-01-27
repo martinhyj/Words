@@ -1,3 +1,4 @@
+![Words](https://socialify.git.ci/martinhyj/Words/image?description=1&descriptionEditable=%E8%AE%B0%E5%8D%95%E8%AF%8D%E6%A1%8C%E9%9D%A2%E5%BA%94%E7%94%A8&font=Inter&forks=1&issues=1&language=1&owner=1&pattern=Plus&pulls=1&stargazers=1&theme=Light)
 ### word in my way
 
 ---
@@ -24,11 +25,11 @@
 
 ​																				UI: 界面一,主界面
 
-<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gjw2upd6tkj309u0k5t9m.jpg" style="zoom:50%;" />
+<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gjw2upd6tkj309u0k5t9m.jpg" style="zoom:30%;" />
 
 ​															界面二：输入单词界面（为界面一的子窗口）
 
-<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gjw2v0f3o9j309v06gaag.jpg" style="zoom:50%;" />
+<img src="https://tva1.sinaimg.cn/large/007S8ZIlly1gjw2v0f3o9j309v06gaag.jpg" style="zoom:30%;" />
 
 ​		功能包含：用户能手动输入单词，储存到自己的单词库（表列包括：单词名，单词释义，单词指数，复习次数）
 
@@ -46,15 +47,15 @@
 
 ​		增添功能一：查看词库中单词在历年考试中出现的频率（tendency）,可通过折线图，直观的观察该单词在考试中出现的次数。
 
-<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gk59yn2251j309w0k3jsp.jpg" style="zoom:50%;" />
+<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gk59yn2251j309w0k3jsp.jpg" style="zoom:30%;" />
 
-<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gk59zpsrngj30gs0czq3h.jpg" style="zoom:50%;" />
+<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gk59zpsrngj30gs0czq3h.jpg" style="zoom:30%;" />
 
 ​		增添功能二：支持手动输入任意单词查看其在历年考试中出现的频率（tendency）
 
 
 
-<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gk5a16lg72j30ce0k3gnp.jpg" style="zoom:50%;" />
+<img src="https://tva1.sinaimg.cn/large/0081Kckwly1gk5a16lg72j30ce0k3gnp.jpg" style="zoom:30%;" />
 
 * 2020-11-3:
   1.调整了单词趋势图的大小(之前两个趋势图有重合部分)
@@ -68,7 +69,7 @@
 
   1:增添了对当前词库中单词长度进行统计的功能，可以加深用户对单词长度的认知
 
-  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gl2mhz8c3uj30lc0k47g0.jpg" style="zoom:50%;" />
+  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gl2mhz8c3uj30lc0k47g0.jpg" style="zoom:30%;" />
 
   2:增加了单词发音功能，单击单词就能得到该单词的美式发音(可修改为英式发音)；单词音频使用了有道词典的[接口](http://dict.youdao.com/dictvoice?type=0&audio=）,python媒体库（播放音频),使用了第三方库pygame;也可以使用第三方库playsound,其跨平台，使用更简单，但暂时使用不了
   
@@ -80,7 +81,7 @@
   
   更新：将考研单词：英语一，英语二的趋势图合并到了一个图中
   
-  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gmcsn8ygy4j30go0bv3z7.jpg" style="zoom:50%;" />
+  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gmcsn8ygy4j30go0bv3z7.jpg" style="zoom:30%;" />
   
 * 2020-12-15
 
@@ -104,12 +105,12 @@
 * 2021 1-3
   增加查看详细信息的功能：记忆单词时，在菜单栏：查看菜单中，选择查看该单词详细信息查看
   
-  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gmcsf2a9jrj30cj0d6t9p.jpg" style="zoom:60%;" />
+  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gmcsf2a9jrj30cj0d6t9p.jpg" style="zoom:30%;" />
   
 * 2021 1-4
   1:发音方式改变：点击发音喇叭播放单词发音，左键：英音，右键：美音
 
-  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gmcsiggrxaj309p0k2gmt.jpg" style="zoom:50%;" />
+  <img src="https://tva1.sinaimg.cn/large/0081Kckwly1gmcsiggrxaj309p0k2gmt.jpg" style="zoom:25%;" />
   
 * 2021 1-21
   
