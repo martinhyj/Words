@@ -2,7 +2,7 @@
 '''
 Author: martin
 Date: 2020-10-06 19:54:02
-LastEditTime: 2021-01-05 18:52:11
+LastEditTime: 2021-01-21 23:46:54
 LastEditors: Please set LastEditors
 Description: In User Settings Edit
 FilePath: /py/practice/UI_words.py
@@ -33,6 +33,7 @@ class window(Tk):
         self.end_time=0
         # 默认设置
         self.wordbase=0 #默认单词库为考研单词
+        self.pre_wordbase=0
         self.way=0  #默认记忆方式为随机记忆
         self.length=7 #默认记忆长度为7
 
@@ -78,8 +79,11 @@ class window(Tk):
         
 
         #标签宽度，与行数，及字体大小，对齐方式
+        # self.exp=StringVar(self)
+        self.label_1=StringVar(self)
+        self.label_1.set("考研")
         self.show_explain=Message(self,fg="blue", font=("黑体",20),width=300,justify='left')
-        # self.show_explain.bind('<Button-1>',func=lambda event:self.show_detail(event))
+        # self.show_label1=Label(self,fg="blue",textvariable=self.label_1,font=("黑体",20),width=5).place(relx=0.4,rely=0.28)
         self.show_word=Label(self,fg="blue", font=("黑体",50),height=2,width=20)
         
         self.begain=StringVar(self)
@@ -102,11 +106,11 @@ class window(Tk):
         self.button1.place(relx=0.15,rely=0.60)
         self.button2=Button(self,text='加入单词',font=("黑体",25),fg='blue',cursor='mouse',command=lambda:self.add_ui())
         self.button2.place(relx=0.5,rely=0.60)
-        self.button3=Button(self,text='单词趋势',font=("黑体",25),fg='blue',cursor='mouse',command=lambda:TheWords.show_tendency(word=self.testword[0]))
+        self.button3=Button(self,text='单词趋势',font=("黑体",25),fg='blue',cursor='mouse',command=lambda:TheWords.show_tendency(word=self.testword[0],wordbase_id=self.wordbase))
         self.button3.place(relx=0.15,rely=0.68)
         self.button4=Button(self,text='查询趋势',font=("黑体",25),fg='blue',cursor='mouse',command=lambda:self.search())
         self.button4.place(relx=0.5,rely=0.68)
-        self.button5=Button(self,text='单词长度',font=("黑体",25),fg='blue',cursor='mouse',command=lambda:word.word_length_static(self.wordbase))
+        self.button5=Button(self,text='单词长度',font=("黑体",25),fg='blue',cursor='mouse',command=lambda:word.word_length_static(wordbase_id=self.wordbase))
         self.button5.place(relx=0.15,rely=0.76)
         self.button6=Button(self,text='查询单词',font=("黑体",25),fg='blue',cursor='mouse',command=self.search_by_explainUI)
         self.button6.place(relx=0.5,rely=0.76)
@@ -144,25 +148,24 @@ class window(Tk):
             test_word="释义:"+test_word
         # test_word='光标位于: %s,%s'%(str(event.x),str(event.y))
         self.show_explain.config(text=test_word)
+        # self.show_explain.config(text=test_word)
         self.show_explain.place(relx=0.1,rely=0.35)
         print('展示释义')
-
-    # 清空当前释义
-    def clearexplain(self):
-        self.show_explain.config(text='')
-        # self.show_explain.place(relx=0.1,rely=0.4)
-
-    #销毁部件对象
-    def quitobject(self,mylabel):
-        mylabel.destroy()
 
     #开始单词测试
     def start(self):
         # 在记下个单词之前，收集记忆上个单词的时间
-        if len(self.testword)==4 and not self.button1_state:
+        if len(self.testword)==5 and not self.button1_state:
             self.end_time=get_time_now()
-            word.word_update(self.testword[0],self.end_time-self.start_time,self.wordbase)
-            print(self.end_time-self.start_time)
+
+            if self.wordbase !=self.pre_wordbase:
+                word.word_update(self.testword[0],self.end_time-self.start_time,self.pre_wordbase)
+                self.pre_wordbase=self.wordbase
+                print(self.end_time-self.start_time)
+            else:
+                word.word_update(self.testword[0],self.end_time-self.start_time,self.wordbase)
+                self.pre_wordbase=self.wordbase
+                print(self.end_time-self.start_time)
 
         # 展示单词
         if not self.button1_state:
@@ -174,8 +177,8 @@ class window(Tk):
                 self.testword=word.getword_index(self.wordbase)
             elif self.way==3:
                 self.testword=word.getWord_Length(self.wordbase,self.length)
-            self.showword()
-            self.clearexplain()
+            self.show_explain.config(text="")
+            self.showword() 
             self.begain.set('查看释义')
             self.button1_state=True
         # 展示释义
@@ -264,7 +267,7 @@ class window(Tk):
        newword.pack()
 
        #按键触发
-       searchbutton=Button(addUI,text="查询",font=("黑体",25),fg='gray',cursor='mouse', command=lambda:TheWords.show_tendency(word=newword.get()))
+       searchbutton=Button(addUI,text="查询",font=("黑体",25),fg='gray',cursor='mouse', command=lambda:TheWords.show_tendency(word=newword.get(),wordbase_id=self.wordbase))
        searchbutton.pack()
 
        # 禁用button
@@ -345,10 +348,13 @@ class window(Tk):
 
             if results:
                 for result in results:
-                    text=text+result[0]+", "
-            self.show_word.config(text="")
-            self.show_explain.config(text=text[0:-2])
-            self.show_explain.place(relx=0.1,rely=0.35)
+                    text=text+"\n"+result[0]
+                self.show_word.pack_forget()
+                self.show_explain.config(text=text)
+            else:
+                self.show_word.pack_forget()
+                self.show_explain.config(text=text+"无相关信息")	
+            self.show_explain.place(relx=0.1,rely=0.2)
             print('展示查询结果')
     
     def set_wordbase(self,id):
@@ -356,10 +362,11 @@ class window(Tk):
         设置当前词库
         '''
         list=["考研","四级","六级","高考"]
-        if id !=0:
+        if id ==3:
            tkinter.messagebox.showwarning('提示','该功能正在路上') 
         else:
             self.wordbase=id
+            self.label_1.set(list[id])
             print("当词库:{}".format(list[id]))
 
     def set_way(self,id):
@@ -378,7 +385,7 @@ class window(Tk):
         '''
         if not self.detail_ui:
             # 获取detail
-            detail_text=get_detail(self.testword[0])
+            detail_text=get_detail(self.testword[0],self.wordbase)
             # print(detail_text)
             # 检测是否查询到
             # rollbar
@@ -407,6 +414,8 @@ class window(Tk):
                 detail_massage.pack()
                 
                 sb.config(command=detail_massage.yview)
+                self.detail_ui.protocol(name="WM_DELETE_WINDOW", func=lambda:self.close_window(0))
+
 
     def show_about(self):
         '''

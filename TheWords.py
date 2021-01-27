@@ -2,7 +2,7 @@
 '''
 Author: martin
 Date: 2020-10-06 15:32:25
-LastEditTime: 2021-01-05 18:48:57
+LastEditTime: 2021-01-21 23:17:12
 LastEditors: Please set LastEditors
 Description: In User Settings Edit
 FilePath: /py/practice/TheWords.py
@@ -14,13 +14,15 @@ import json
 import os
 import random
 import sqlite3
-from datetime import datetime, timedelta
+from datetime import timedelta,datetime
 from sqlite3 import *
 
 import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 
+wordtables=["WORD_KAOYAN","WORD_CET4","WORD_CET6"] #单词表
+word_content=["KaoYan_3.json","CET4_3.json","CET6_3.json"]
 
 class word:
     '''
@@ -33,19 +35,17 @@ class word:
         self.master_index=master_index
         self.review_times=review_times
     
-    
-    
     def storage(self,wordbase_id):
         '''
         将单词信息存储到数据库
         '''
         #连接 本地数据库mysql
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-储存单词")
 
         #插入单词信息
         cursor=mydb.cursor()
-        sql_insert="INSERT INTO WORD_KAOYAN(\
+        sql_insert="INSERT INTO "+wordtables[wordbase_id]+"(\
             word, explain, master_index, times,last_time)\
             VALUES ('%s', '%s', %s, %s,'%s')" %(self.name, self.c_name, self.master_index, self.review_times,gettime())
         try:
@@ -64,12 +64,12 @@ class word:
         '''
         查询一个单词是否在数据库中
         '''
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-search单词")
         cursor=mydb.cursor()
 
-        sql = "SELECT * FROM WORD_KAOYAN \
-        WHERE word = '%s' " %(a_word)
+        sql = "SELECT * FROM "+wordtables[wordbase_id]+\
+        "WHERE word = '%s' " %(a_word)
         try:
          # 执行SQL语句
           cursor.execute(sql)
@@ -90,11 +90,11 @@ class word:
         
         #连接 本地数据库mysql
         word=[]
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-抽取单词")
         cursor=mydb.cursor()
-        sql_select="SELECT * FROM WORD_KAOYAN\
-            WHERE master_index < %s"%(3)
+        sql_select="SELECT * FROM "+self.wordtables[wordbase_id]+\
+            "WHERE master_index < %s"%(3)
         try:
             cursor.execute(sql_select)
             result=cursor.fetchall()
@@ -114,10 +114,10 @@ class word:
         #连接 本地数据库mysql
         # 获取14天前的时间
 
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-抽取单词")
         cursor=mydb.cursor()
-        sql_select="SELECT * FROM WORD_KAOYAN"
+        sql_select="SELECT * FROM "+wordtables[wordbase_id]
         try:
             cursor.execute(sql_select)
             result=cursor.fetchall()
@@ -139,10 +139,10 @@ class word:
     
         #连接本地数据库mysql
         # 获取14天前的时间
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-抽取单词")
         cursor=mydb.cursor()
-        sql_select="SELECT * FROM WORD_KAOYAN"
+        sql_select="SELECT * FROM "+wordtables[wordbase_id]
         try:
             cursor.execute(sql_select)
             result=cursor.fetchall()
@@ -162,11 +162,11 @@ class word:
         1:单词每复习一次，属性复习次数加一
         2:根据用户记忆该单词的时间，计算出该单词的熟练指数
         '''
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-更新单词")
-        change=get_change(interval,updated_word)
+        change=get_change(interval,updated_word,wordbase_id)
         cursor=mydb.cursor()
-        sql_update="UPDATE WORD_KAOYAN\
+        sql_update="UPDATE "+wordtables[wordbase_id]+"\
             SET times = times + 1,\
                 master_index=%s\
             WHERE word = '%s' " %(change,updated_word)
@@ -184,10 +184,10 @@ class word:
         '''
         解决释义错误的问题
         '''
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-更新单词")
         cursor=mydb.cursor()
-        sql_update="UPDATE WORD_KAOYAN\
+        sql_update="UPDATE "+wordtables[wordbase_id]+"\
             SET explain='%s'\
             WHERE word = '%s' " %(explain,a_word)
         try:
@@ -202,9 +202,9 @@ class word:
         '''
         统计词库内单词长度
         '''
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         cursor=mydb.cursor()
-        sql_select="SELECT * FROM WORD_KAOYAN"
+        sql_select="SELECT * FROM "+wordtables[wordbase_id]
         try:
             cursor.execute(sql_select)
             result=cursor.fetchall()
@@ -245,10 +245,10 @@ class word:
         '''
         根据关键字，查询类似释义的单词
         '''
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-抽取单词")
         cursor=mydb.cursor()
-        sql_select="SELECT * FROM WORD_KAOYAN"
+        sql_select="SELECT * FROM "+wordtables[wordbase_id]
         
         try:
             cursor.execute(sql_select)
@@ -274,10 +274,10 @@ class word:
             根据单词长度抽取单词
         '''
         aim_list=[]
-        mydb=connect_sqlite(wordbase_id)
+        mydb=connect_sqlite()
         print("连接成功-抽取单词")
         cursor=mydb.cursor()
-        sql_select="SELECT * FROM WORD_KAOYAN"
+        sql_select="SELECT * FROM "+wordtables[wordbase_id]
         try:
             cursor.execute(sql_select)
             result=cursor.fetchall()
@@ -295,25 +295,27 @@ class word:
             return ("NONE","none",999,999,"1999-4-9")
         else: return aim_list[random.randint(0,n-1)]
 
-def get_detail(word):
+def get_detail(word,wordbase_id):
     '''
         返回一个单词的详细信息，以字符串方式返回
     '''
-    with open(os.path.dirname(os.path.abspath(__file__))+"/json/KaoYan_3.json",'r',encoding="utf-8") as file:
+    with open(os.path.dirname(os.path.abspath(__file__))+"/json/"+word_content[wordbase_id],'r',encoding="utf-8") as file:
         for WORD in file.readlines():
             config=json.loads(WORD)
             result=""
             if config["headWord"]==word:
                 # print(WORD)
                 # 音标
-                us="["+config["content"]["word"]["content"]["usphone"]+"] "
-                uk="["+config["content"]["word"]["content"]["ukphone"]+"]\n"
-                
+                try:
+                    us="[" + config["content"]["word"]["content"]["usphone"]+ "] "
+                    uk="["+config["content"]["word"]["content"]["ukphone"]+"]\n"
+                except KeyError:
+                    print("音标error")
                 # 翻译
                 trans_cn=""
                 for trans in config["content"]["word"]["content"]["trans"]:
                     trans_cn+=trans['pos']+" "+ trans["tranCn"]+"\n"
-                
+    
                 # 短语:
                 try:
                     pharses=config["content"]["word"]["content"]["phrase"]["desc"]+":\n"
@@ -361,12 +363,12 @@ def get_detail(word):
         return None
 
 
-def getRelWords(word):
+def getRelWords(word,wordbase_id):
     '''
         返回一个单词相关联单词的列表
     '''
     rels_list=[word]
-    with open(os.path.dirname(os.path.abspath(__file__))+"/json/KaoYan_3.json",'r',encoding="utf-8") as file:
+    with open(os.path.dirname(os.path.abspath(__file__))+"/json/"+word_content[wordbase_id],'r',encoding="utf-8") as file:
         for WORD in file.readlines():
             config=json.loads(WORD)
             if config["headWord"]==word:
@@ -384,10 +386,10 @@ def getRelWords(word):
     
 def getWord(word,wordbase_id):
     
-    mydb=connect_sqlite(wordbase_id)
+    mydb=connect_sqlite()
     print("连接成功-抽取单词")
     cursor=mydb.cursor()
-    sql_select="SELECT * FROM WORD_KAOYAN\
+    sql_select="SELECT * FROM "+wordtables[wordbase_id]+"\
         WHERE word = '%s' "%(word)
     try:
         cursor.execute(sql_select)
@@ -399,7 +401,7 @@ def getWord(word,wordbase_id):
     mydb.close()
     return result[0]
         
-def connect_sqlite(wordbase_id):
+def connect_sqlite():
     '''
     连接sqlite数据库文件
     '''
@@ -410,20 +412,20 @@ def gettime():
     ''''
     获取当前的时间，年月日
     '''
-    now=datetime.now()
+    now=datetime.datetime.now()
     time=now.date().isoformat()
     # print(type(time))
     # print(time)
     return time
         
 
-def get_change(interval,word):
+def get_change(interval,word,wordbase_id):
     '''
     根据用户单次记忆该单词的时间，计算出该单词的熟练指数
     '''
     index=0
     length=len(word)
-    WORD=getWord(word,0)
+    WORD=getWord(word,wordbase_id)
     explain_length=len(split_explain(WORD[1]))
 
     if 10>=interval>0:
@@ -497,7 +499,7 @@ def split_explain(str):
     return word_set
 
 
-def show_tendency(word):
+def show_tendency(word,wordbase_id):
     '''
         使用matplotlib展示单词在历年真题中出现的次数,
         将指定单词与每年统计的数据匹配,统计出该单词历年出现的曲线图
@@ -510,7 +512,7 @@ def show_tendency(word):
         rate2=[0,0,0,0,0,0,0,0,0,0,0]
         year=[2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020]
 
-        rels_list=getRelWords(word)
+        rels_list=getRelWords(word,wordbase_id)
         for WORD in rels_list:
             # 匹配出对应单词行
             result=df[df["word"]==WORD]
